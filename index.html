@@ -161,7 +161,7 @@
         <div class="layout-split access-split">
           <div class="card rainy-day-card">
             <h3>Closures in a Rainy Day path</h3>
-            <p class="big-number">12–14</p>
+            <p class="big-number"><span class="closures-range-min" data-count-to="12" aria-live="polite">0</span>–<span class="closures-range-max" data-count-to="14" aria-live="polite">0</span></p>
             <p>additional hospitals could be forced to close by 2030 without intervention.</p>
           </div>
           <div class="card impact-card">
@@ -203,14 +203,26 @@
       <section id="levers" class="section">
         <h2>Policy Levers: Moving Toward Sustainability</h2>
         <p class="section-intro">
-          Several levers are within the Commonwealth’s influence. Adjust the settings below to see
-          how a package of actions can move Pennsylvania closer to a sustainable path.
+          State leaders can influence several factors. Adjust the settings below to see how different policy choices move Pennsylvania toward—or away from—a sustainable future for hospitals.
         </p>
 
-        <div class="layout-split levers-layout" aria-label="Policy levers simulator">
-          <div class="card">
-            <h3>Adjust state‑influenceable levers</h3>
-            <form id="lever-form">
+        <div class="levers-viz" aria-label="Policy levers simulator">
+          <div class="levers-chart-card card">
+            <h3>Where could we land by 2030?</h3>
+            <p class="levers-chart-intro">Each bar is a possible outcome. <strong>Your trajectory</strong> (highlighted) shows where current settings point.</p>
+            <div class="chart-container chart-container-tall">
+              <canvas id="leverScenarioChart" aria-label="Scenario comparison with your trajectory"></canvas>
+            </div>
+            <div class="levers-outcome-callout" id="levers-outcome-callout">
+              <span class="levers-outcome-badge" id="lever-outcome-badge">Rainy Day</span>
+              <p id="lever-outcome-label" class="outcome-label">With current settings, hospitals face persistent financial strain.</p>
+              <p id="lever-outcome-detail" class="outcome-detail">Higher risk of closures and reduced access for communities.</p>
+            </div>
+          </div>
+
+          <div class="levers-controls-card card">
+            <h3>Adjust policy levers</h3>
+            <form id="lever-form" class="lever-form-grid">
               <div class="lever-group" data-lever="medicaid">
                 <label>Medicaid reimbursement</label>
                 <div class="lever-options">
@@ -220,7 +232,7 @@
                 </div>
               </div>
               <div class="lever-group" data-lever="liability">
-                <label>Medical liability environment</label>
+                <label>Medical liability</label>
                 <div class="lever-options">
                   <button type="button" class="lever-option" data-level="current">Current</button>
                   <button type="button" class="lever-option" data-level="improved">Reformed</button>
@@ -228,7 +240,7 @@
                 </div>
               </div>
               <div class="lever-group" data-lever="regs">
-                <label>Administrative requirements</label>
+                <label>Administrative burden</label>
                 <div class="lever-options">
                   <button type="button" class="lever-option" data-level="current">Unchanged</button>
                   <button type="button" class="lever-option" data-level="improved">Streamlined</button>
@@ -236,33 +248,15 @@
                 </div>
               </div>
               <div class="lever-group" data-lever="ai">
-                <label>Workforce &amp; AI adoption</label>
+                <label>Workforce &amp; AI</label>
                 <div class="lever-options">
                   <button type="button" class="lever-option" data-level="current">Limited</button>
                   <button type="button" class="lever-option" data-level="improved">Targeted</button>
                   <button type="button" class="lever-option" data-level="transformed">Broad</button>
                 </div>
               </div>
-              <p class="form-note">
-                This tool is illustrative and uses qualitative mappings based on the report’s scenario
-                drivers. It is not a forecast.
-              </p>
             </form>
-          </div>
-
-          <div class="card lever-outcome">
-            <h3>Illustrative outcome</h3>
-            <p id="lever-outcome-label" class="outcome-label">Trajectory: close to Rainy Day</p>
-            <p id="lever-outcome-detail" class="outcome-detail">
-              With current settings, hospitals face persistent financial strain, higher risk of
-              closures, and reduced access for communities.
-            </p>
-            <div class="chart-container">
-              <canvas
-                id="leverScenarioChart"
-                aria-label="Indicative margin band based on lever settings"
-              ></canvas>
-            </div>
+            <p class="form-note">Illustrative only. Based on report scenario drivers, not a forecast.</p>
           </div>
         </div>
       </section>
@@ -303,7 +297,7 @@
 
     <button class="back-to-top" id="back-to-top" type="button">Back to top</button>
 
-    <script src="main.js?v=4"></script>
+    <script src="main.js?v=6"></script>
   </body>
   </html>
 
