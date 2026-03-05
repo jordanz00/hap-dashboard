@@ -42,7 +42,33 @@
           Tap a tile to change the highlight and explore the story behind each figure.
         </p>
         <div class="overview-layout">
-          <div class="kpi-grid" id="overview-kpis" aria-label="Economic impact key figures"></div>
+          <div class="kpi-grid" id="overview-kpis" aria-label="Economic impact key figures">
+            <div class="kpi-card kpi-active" data-kpi-id="gdp">
+              <div class="kpi-label">Share of state GDP</div>
+              <div class="kpi-value">19%</div>
+              <div class="kpi-detail">Hospitals and related activity as a share of the Commonwealth’s GDP.</div>
+            </div>
+            <div class="kpi-card" data-kpi-id="output">
+              <div class="kpi-label">Total economic output</div>
+              <div class="kpi-value">$195B</div>
+              <div class="kpi-detail">Direct and indirect contributions from hospitals statewide.</div>
+            </div>
+            <div class="kpi-card" data-kpi-id="community">
+              <div class="kpi-label">Community benefit</div>
+              <div class="kpi-value">$10.8B</div>
+              <div class="kpi-detail">Includes shortfalls from Medicare/Medicaid, bad debt, and charity care.</div>
+            </div>
+            <div class="kpi-card" data-kpi-id="jobs">
+              <div class="kpi-label">Jobs supported</div>
+              <div class="kpi-value">300,000</div>
+              <div class="kpi-detail">Individuals employed directly by hospitals across Pennsylvania.</div>
+            </div>
+            <div class="kpi-card" data-kpi-id="wages">
+              <div class="kpi-label">Wages and benefits</div>
+              <div class="kpi-value">$33B+</div>
+              <div class="kpi-detail">Direct wages and benefits paid by hospitals.</div>
+            </div>
+          </div>
           <div class="card overview-insight" aria-live="polite">
             <h3 id="kpi-focus-title">Hospitals’ share of the economy</h3>
             <p id="kpi-focus-text">
@@ -298,7 +324,7 @@
 
     <button class="back-to-top" id="back-to-top" type="button">Back to top</button>
 
-    <script src="main.js?v=2"></script>
+    <script src="main.js?v=3"></script>
   </body>
   </html>
 
