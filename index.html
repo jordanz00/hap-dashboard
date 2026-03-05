@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Time to Act: Pennsylvania Hospitals Dashboard</title>
+    <meta
+      name="description"
+      content="Interactive dashboard: Oliver Wyman report for HAP on Pennsylvania hospital sustainability. More hospital closures likely without increased support."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Chart.js CDN for simple, accessible charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header class="site-header">
+      <div class="branding">
+        <p class="report-by">Report by Oliver Wyman · Commissioned by HAP</p>
+        <h1>Time to Act</h1>
+        <p class="tagline">What the Future Holds for Pennsylvania’s Hospitals, Patients, and Communities</p>
+        <p class="subtitle">Interactive dashboard for policymakers · January 2026</p>
+      </div>
+      <nav class="top-nav" aria-label="Main navigation">
+        <a href="#overview">Overview</a>
+        <a href="#today">Today’s Reality</a>
+        <a href="#scenarios">2030 Scenarios</a>
+        <a href="#access">Access &amp; Closures</a>
+        <a href="#levers">Policy Levers</a>
+        <a href="#methods">Methods &amp; Sources</a>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section id="overview" class="section">
+        <h2>Hospitals as Economic Engines</h2>
+        <p class="section-intro">
+          In a few numbers, see how central hospitals are to Pennsylvania’s economy and workforce.
+          Tap a tile to change the highlight and explore the story behind each figure.
+        </p>
+        <div class="overview-layout">
+          <div class="kpi-grid" id="overview-kpis" aria-label="Economic impact key figures"></div>
+          <div class="card overview-insight" aria-live="polite">
+            <h3 id="kpi-focus-title">Hospitals’ share of the economy</h3>
+            <p id="kpi-focus-text">
+              Hospitals account for about <strong>19% of Pennsylvania’s GDP</strong> and
+              <strong>$195 billion</strong> in total economic activity.
+            </p>
+            <div class="mini-chart-wrapper">
+              <canvas
+                id="economicShareChart"
+                aria-label="Share of state GDP represented by hospitals"
+              ></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="today" class="section alt">
+        <h2>Today’s Financial Reality</h2>
+        <p class="section-intro">
+          Despite disciplined cost management and below‑average costs per discharge, many hospitals
+          are under sustained financial pressure.
+        </p>
+
+        <div class="layout-split">
+          <div class="card">
+            <h3>Operating margins, 2024</h3>
+            <div class="chart-container">
+              <canvas
+                id="marginChart"
+                aria-label="Distribution of hospital operating margins"
+              ></canvas>
+            </div>
+            <p class="chart-caption">
+              In 2024, <strong>51%</strong> of Pennsylvania hospitals had margins below the commonly
+              accepted <strong>4%</strong> sustainability threshold, and
+              <strong>37%</strong> operated at a loss.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Reimbursement shortfalls</h3>
+            <div class="chart-container reimbursement-highlight">
+              <canvas
+                id="reimbursementChart"
+                aria-label="Reimbursement compared with cost of care"
+              ></canvas>
+            </div>
+            <p class="chart-caption">
+              Bars show how each payer category compares with the cost of care. Hover to see how far
+              below cost Pennsylvania hospitals are paid today.
+            </p>
+          </div>
+        </div>
+
+        <div class="layout-split">
+          <div class="card closures-card">
+            <h3>Closures to date</h3>
+            <p class="closures-lead"><span class="closures-count" id="closures-count" data-count-to="25" aria-live="polite">0</span> hospitals have closed in Pennsylvania since 2016.</p>
+            <p class="chart-caption closures-caption">
+              Each point on the map marks a closed facility. Closures cluster in communities that often have few alternatives.
+            </p>
+            <div class="pa-map-shell">
+              <svg id="pa-map-svg" class="pa-map-svg" viewBox="0 0 200 120" role="img" aria-label="Map of Pennsylvania showing locations of hospital closures">
+                <!-- Pennsylvania state outline (Census boundary) -->
+                <path id="pa-outline-path" class="pa-outline" d="" />
+                <g id="pa-dots-group"></g>
+              </svg>
+              <span class="pa-map-caption">25 facilities closed (2016–present)</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Bond ratings</h3>
+            <div class="chart-container">
+              <canvas
+                id="bondRatingChart"
+                aria-label="Bond ratings for Pennsylvania hospitals compared with national medians"
+              ></canvas>
+            </div>
+            <p class="chart-caption">
+              Lower median bond ratings in Pennsylvania signal higher borrowing costs and less room
+              for long‑term investment than the national average.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="scenarios" class="section">
+        <h2>2030 Financial Scenarios</h2>
+        <p class="section-intro">
+          By 2030, Pennsylvania hospitals could end up in very different financial positions depending on policy and the economy. The chart below shows <strong>four possible outcomes</strong>: how much money hospitals would make or lose as a share of their spending.
+        </p>
+        <p class="scenarios-legend">
+          <strong>Positive</strong> (orange) = hospitals earn more than they spend. <strong>Negative</strong> (red) = hospitals spend more than they take in.
+        </p>
+
+        <div class="card scenarios-chart-card">
+          <h3>Possible 2030 outcomes: hospital profit or loss</h3>
+          <div class="chart-container">
+            <canvas id="scenarioMarginChart" aria-label="2030 net margin outcomes by scenario"></canvas>
+          </div>
+          <div class="scenario-cards" id="scenario-cards" aria-label="Scenario details"></div>
+        </div>
+      </section>
+
+      <section id="access" class="section alt">
+        <h2>Access and Community Impact</h2>
+        <p class="section-intro">
+          Hospital closures and service reductions translate into longer travel times, fewer local
+          jobs, and diminished economic activity.
+        </p>
+
+        <div class="layout-split access-split">
+          <div class="card rainy-day-card">
+            <h3>Closures in a Rainy Day path</h3>
+            <p class="big-number">12–14</p>
+            <p>additional hospitals could be forced to close by 2030 without intervention.</p>
+          </div>
+          <div class="card impact-card">
+            <h3>Impact on communities</h3>
+            <p class="impact-intro">Without action, affected communities would face:</p>
+            <div class="impact-stats" id="impact-stats">
+              <div class="impact-stat">
+                <div class="icon-wrap impact-icon-wrap" aria-hidden="true">
+                  <svg class="icon-car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14v-5H5v5Z"/><path d="M5 12l2-4h10l2 4"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg>
+                </div>
+                <div class="impact-stat-content">
+                  <span class="impact-value" data-count-to="22" data-format="minutes" aria-live="polite">+22 min</span>
+                  <span class="impact-label">Additional drive time to nearest hospital and ER</span>
+                </div>
+              </div>
+              <div class="impact-stat">
+                <div class="icon-wrap impact-icon-wrap" aria-hidden="true">
+                  <svg class="icon-worker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M5 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+                </div>
+                <div class="impact-stat-content">
+                  <span class="impact-value" data-count-to="3000" data-format="jobs" aria-live="polite">3,000+</span>
+                  <span class="impact-label">Local jobs at risk</span>
+                </div>
+              </div>
+              <div class="impact-stat">
+                <div class="icon-wrap impact-icon-wrap" aria-hidden="true">
+                  <svg class="icon-money" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="impact-stat-content">
+                  <span class="impact-value" data-count-to="900" data-format="wages" aria-live="polite">$900M+</span>
+                  <span class="impact-label">Lost wages tied to hospitals alone</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="levers" class="section">
+        <h2>Policy Levers: Moving Toward Sustainability</h2>
+        <p class="section-intro">
+          Several levers are within the Commonwealth’s influence. Adjust the settings below to see
+          how a package of actions can move Pennsylvania closer to a sustainable path.
+        </p>
+
+        <div class="layout-split levers-layout" aria-label="Policy levers simulator">
+          <div class="card">
+            <h3>Adjust state‑influenceable levers</h3>
+            <form id="lever-form">
+              <div class="lever-group" data-lever="medicaid">
+                <label>Medicaid reimbursement</label>
+                <div class="lever-options">
+                  <button type="button" class="lever-option" data-level="current">Current</button>
+                  <button type="button" class="lever-option" data-level="improved">Improved</button>
+                  <button type="button" class="lever-option" data-level="transformed">Transformed</button>
+                </div>
+              </div>
+              <div class="lever-group" data-lever="liability">
+                <label>Medical liability environment</label>
+                <div class="lever-options">
+                  <button type="button" class="lever-option" data-level="current">Current</button>
+                  <button type="button" class="lever-option" data-level="improved">Reformed</button>
+                  <button type="button" class="lever-option" data-level="transformed">Strong reform</button>
+                </div>
+              </div>
+              <div class="lever-group" data-lever="regs">
+                <label>Administrative requirements</label>
+                <div class="lever-options">
+                  <button type="button" class="lever-option" data-level="current">Unchanged</button>
+                  <button type="button" class="lever-option" data-level="improved">Streamlined</button>
+                  <button type="button" class="lever-option" data-level="transformed">Modernized</button>
+                </div>
+              </div>
+              <div class="lever-group" data-lever="ai">
+                <label>Workforce &amp; AI adoption</label>
+                <div class="lever-options">
+                  <button type="button" class="lever-option" data-level="current">Limited</button>
+                  <button type="button" class="lever-option" data-level="improved">Targeted</button>
+                  <button type="button" class="lever-option" data-level="transformed">Broad</button>
+                </div>
+              </div>
+              <p class="form-note">
+                This tool is illustrative and uses qualitative mappings based on the report’s scenario
+                drivers. It is not a forecast.
+              </p>
+            </form>
+          </div>
+
+          <div class="card lever-outcome">
+            <h3>Illustrative outcome</h3>
+            <p id="lever-outcome-label" class="outcome-label">Trajectory: close to Rainy Day</p>
+            <p id="lever-outcome-detail" class="outcome-detail">
+              With current settings, hospitals face persistent financial strain, higher risk of
+              closures, and reduced access for communities.
+            </p>
+            <div class="chart-container">
+              <canvas
+                id="leverScenarioChart"
+                aria-label="Indicative margin band based on lever settings"
+              ></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="methods" class="section alt">
+        <h2>Methods and Sources</h2>
+        <p>
+          This dashboard summarizes key findings from the report
+          <em>“Time to Act: What The Future Holds For Pennsylvania’s Hospitals, Patients, and Communities”</em>
+          (January 2026). The analysis was prepared by <strong>Oliver Wyman</strong> and commissioned by
+          <strong>The Hospital and Healthsystem Association of Pennsylvania (HAP)</strong>.
+        </p>
+        <ul class="bullet-list">
+          <li>
+            Quantitative values (for example, margins, closures, reimbursement levels, job and wage
+            impacts) are taken directly from the report text and its endnotes.
+          </li>
+          <li>
+            Scenario labels and 2030 net margins are based on the report’s modeling of Baseline, Baseline with H.R. 1, Rainy Day, and Sustainability Prevails paths.
+          </li>
+          <li>
+            The policy lever tool groups scenario drivers from Appendix A into four high‑level levers
+            and provides <strong>illustrative</strong> mappings only. It does not calculate new projections.
+          </li>
+        </ul>
+        <p>
+          For full detail, see the original report and appendix, including methodology, assumptions,
+          and data sources.
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p class="footer-attribution">
+        <strong>Oliver Wyman</strong> prepared this analysis for <strong>The Hospital and Healthsystem Association of Pennsylvania (HAP)</strong>. This interactive dashboard is a visual companion to the full report and does not replace it.
+      </p>
+    </footer>
+
+    <button class="back-to-top" id="back-to-top" type="button">Back to top</button>
+
+    <script src="main.js"></script>
+  </body>
+  </html>
+
