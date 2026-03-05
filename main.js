@@ -144,12 +144,11 @@ const overviewGaugePlugin = {
 };
 
 const CHART_ANIM_DURATION = 1200;
-let overviewKPIsRendered = false;
 
 // UI initialization
 document.addEventListener("DOMContentLoaded", () => {
   const overviewChart = initEconomicShareChart();
-  if (overviewChart) renderOverviewKPIs(overviewChart);
+  if (overviewChart) bindOverviewKPIs(overviewChart);
   renderScenarioCards();
   initClosuresMap();
   initClosuresScrollAnimations();
@@ -158,21 +157,14 @@ document.addEventListener("DOMContentLoaded", () => {
   initBackToTop();
 });
 
-function renderOverviewKPIs(overviewChart) {
-  if (overviewKPIsRendered) return;
-  overviewKPIsRendered = true;
+// KPI cards are in the HTML; this only attaches click behavior (no DOM creation).
+function bindOverviewKPIs(overviewChart) {
   const container = document.getElementById("overview-kpis");
-  if (!container) return;
-  const existing = container.querySelectorAll(".kpi-card");
-  if (existing.length >= 5) {
-    while (container.children.length > 5) container.removeChild(container.lastChild);
-    return;
-  }
-
-  const formatter = new Intl.NumberFormat("en-US");
-
   const focusTitle = document.getElementById("kpi-focus-title");
   const focusText = document.getElementById("kpi-focus-text");
+  if (!container || !focusTitle || !focusText) return;
+
+  const formatter = new Intl.NumberFormat("en-US");
 
   const kpis = [
     {
@@ -219,21 +211,14 @@ function renderOverviewKPIs(overviewChart) {
     }
   ];
 
-  let activeId = "gdp";
-
   const setActive = (id) => {
-    activeId = id;
     const kpi = kpis.find((k) => k.id === id);
-    if (kpi && focusTitle && focusText) {
+    if (kpi) {
       focusTitle.textContent = kpi.focusTitle;
       focusText.textContent = kpi.focusText;
     }
     container.querySelectorAll(".kpi-card").forEach((card) => {
-      if (card.dataset.kpiId === id) {
-        card.classList.add("kpi-active");
-      } else {
-        card.classList.remove("kpi-active");
-      }
+      card.classList.toggle("kpi-active", card.dataset.kpiId === id);
     });
     if (overviewChart && kpiGaugeData[id]) {
       const g = kpiGaugeData[id];
@@ -243,21 +228,12 @@ function renderOverviewKPIs(overviewChart) {
     }
   };
 
-  for (const kpi of kpis) {
-    const card = document.createElement("div");
-    card.className = "kpi-card";
-    card.dataset.kpiId = kpi.id;
-    card.innerHTML = `
-      <div class="kpi-label">${kpi.label}</div>
-      <div class="kpi-value">${kpi.value}</div>
-      <div class="kpi-detail">${kpi.detail}</div>
-    `;
-    card.addEventListener("click", () => setActive(kpi.id));
-    container.appendChild(card);
-  }
+  container.querySelectorAll(".kpi-card").forEach((card) => {
+    const id = card.dataset.kpiId;
+    if (id) card.addEventListener("click", () => setActive(id));
+  });
 
-  // Set initial active tile
-  setActive(activeId);
+  setActive("gdp");
 }
 
 function initEconomicShareChart() {
