@@ -144,6 +144,7 @@ const overviewGaugePlugin = {
 };
 
 const CHART_ANIM_DURATION = 1200;
+let overviewKPIsRendered = false;
 
 // UI initialization
 document.addEventListener("DOMContentLoaded", () => {
@@ -156,10 +157,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function renderOverviewKPIs(overviewChart) {
+  if (overviewKPIsRendered) return;
   const container = document.getElementById("overview-kpis");
   if (!container) return;
-  if (container.hasAttribute("data-kpis-inited")) return;
-  container.setAttribute("data-kpis-inited", "1");
+  overviewKPIsRendered = true;
 
   const formatter = new Intl.NumberFormat("en-US");
 
@@ -508,11 +509,14 @@ function initChartsWhenVisible() {
   const chartConfigs = [
     {
       container: document.querySelector("#overview .mini-chart-wrapper"),
-      init: () => {
+      init: (observerRef, overviewContainer) => {
+        if (overviewKPIsRendered) return;
         const ch = initEconomicShareChart();
         if (!ch) return;
-        if (document.getElementById("overview-kpis")?.hasAttribute("data-kpis-inited")) return;
         renderOverviewKPIs(ch);
+        if (observerRef && overviewContainer) {
+          observerRef.unobserve(overviewContainer);
+        }
       }
     },
     {
@@ -546,7 +550,10 @@ function initChartsWhenVisible() {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         const config = chartConfigs.find((c) => c.container === entry.target);
-        if (config?.init) {
+        if (!config?.init) return;
+        if (config.init.length > 0) {
+          config.init(observer, config.container);
+        } else {
           config.init();
         }
       });
