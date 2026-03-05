@@ -159,11 +159,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function renderOverviewKPIs(overviewChart) {
-  const container = document.getElementById("overview-kpis");
-  if (!container) return;
-  if (container.querySelector(".kpi-card")) return;
   if (overviewKPIsRendered) return;
   overviewKPIsRendered = true;
+  const container = document.getElementById("overview-kpis");
+  if (!container) return;
+  const existing = container.querySelectorAll(".kpi-card");
+  if (existing.length >= 5) {
+    while (container.children.length > 5) container.removeChild(container.lastChild);
+    return;
+  }
 
   const formatter = new Intl.NumberFormat("en-US");
 
