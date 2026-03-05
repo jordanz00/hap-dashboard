@@ -148,6 +148,8 @@ let overviewKPIsRendered = false;
 
 // UI initialization
 document.addEventListener("DOMContentLoaded", () => {
+  const overviewChart = initEconomicShareChart();
+  if (overviewChart) renderOverviewKPIs(overviewChart);
   renderScenarioCards();
   initClosuresMap();
   initClosuresScrollAnimations();
@@ -508,18 +510,6 @@ function initBondRatingChart() {
 function initChartsWhenVisible() {
   const chartConfigs = [
     {
-      container: document.querySelector("#overview .mini-chart-wrapper"),
-      init: (observerRef, overviewContainer) => {
-        if (overviewKPIsRendered) return;
-        const ch = initEconomicShareChart();
-        if (!ch) return;
-        renderOverviewKPIs(ch);
-        if (observerRef && overviewContainer) {
-          observerRef.unobserve(overviewContainer);
-        }
-      }
-    },
-    {
       container: document.querySelector("#marginChart")?.closest(".chart-container"),
       init: initMarginChart
     },
@@ -550,12 +540,7 @@ function initChartsWhenVisible() {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         const config = chartConfigs.find((c) => c.container === entry.target);
-        if (!config?.init) return;
-        if (config.init.length > 0) {
-          config.init(observer, config.container);
-        } else {
-          config.init();
-        }
+        if (config?.init) config.init();
       });
     },
     { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
