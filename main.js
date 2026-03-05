@@ -159,9 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function renderOverviewKPIs(overviewChart) {
-  if (overviewKPIsRendered) return;
   const container = document.getElementById("overview-kpis");
   if (!container) return;
+  if (container.querySelector(".kpi-card")) return;
+  if (overviewKPIsRendered) return;
   overviewKPIsRendered = true;
 
   const formatter = new Intl.NumberFormat("en-US");
