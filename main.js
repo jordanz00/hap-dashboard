@@ -157,12 +157,14 @@ document.addEventListener("DOMContentLoaded", () => {
   initBackToTop();
 });
 
-// KPI cards are in the HTML; this only attaches click behavior (no DOM creation).
+// Overview: fixed <ul> with 5 <li><button> in HTML. We only bind clicks and update chart—no DOM creation. Trim to 5 if extras exist.
 function bindOverviewKPIs(overviewChart) {
-  const container = document.getElementById("overview-kpis");
+  const listEl = document.getElementById("overview-stats-list");
   const focusTitle = document.getElementById("kpi-focus-title");
   const focusText = document.getElementById("kpi-focus-text");
-  if (!container || !focusTitle || !focusText) return;
+  if (!listEl || !focusTitle || !focusText) return;
+
+  while (listEl.children.length > 5) listEl.removeChild(listEl.lastChild);
 
   const formatter = new Intl.NumberFormat("en-US");
 
@@ -217,8 +219,8 @@ function bindOverviewKPIs(overviewChart) {
       focusTitle.textContent = kpi.focusTitle;
       focusText.textContent = kpi.focusText;
     }
-    container.querySelectorAll(".kpi-card").forEach((card) => {
-      card.classList.toggle("kpi-active", card.dataset.kpiId === id);
+    listEl.querySelectorAll(".overview-stat-btn").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.stat === id);
     });
     if (overviewChart && kpiGaugeData[id]) {
       const g = kpiGaugeData[id];
@@ -228,9 +230,9 @@ function bindOverviewKPIs(overviewChart) {
     }
   };
 
-  container.querySelectorAll(".kpi-card").forEach((card) => {
-    const id = card.dataset.kpiId;
-    if (id) card.addEventListener("click", () => setActive(id));
+  listEl.querySelectorAll(".overview-stat-btn").forEach((btn) => {
+    const id = btn.dataset.stat;
+    if (id) btn.addEventListener("click", () => setActive(id));
   });
 
   setActive("gdp");
