@@ -380,10 +380,10 @@ function initScenarioMarginChart() {
   new Chart(ctx, {
     type: "bar",
     data: {
-      labels: scenarios.map((s) => s.shortLabel),
+      labels: scenarios.map((s) => s.name),
       datasets: [
         {
-          label: "2030 net margin",
+          label: "2030 net margin %",
           data: scenarios.map((s) => s.netMargin2030Percent),
           backgroundColor: scenarios.map((s) => {
             if (s.id === "sustainability") return "#fbb040";
@@ -394,6 +394,7 @@ function initScenarioMarginChart() {
       ]
     },
     options: {
+      indexAxis: "y",
       responsive: true,
       maintainAspectRatio: false,
       animation: { duration: CHART_ANIM_DURATION },
@@ -401,19 +402,42 @@ function initScenarioMarginChart() {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: (ctx) => `${ctx.parsed.y}% net margin`
+            label: (c) => `${c.parsed.x}% net margin`
           }
         }
       },
       scales: {
-        y: {
+        x: {
           beginAtZero: true,
-          ticks: {
-            callback: (value) => `${value}%`
-          }
+          min: -14,
+          max: 10,
+          ticks: { callback: (v) => `${v}%` },
+          grid: { color: "rgba(0,114,188,0.08)" }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { size: 12 }, padding: 12 }
         }
       }
     }
+  });
+  initScenarioExpandables();
+}
+
+function initScenarioExpandables() {
+  const container = document.getElementById("scenario-cards");
+  if (!container) return;
+  scenarios.forEach((s) => {
+    const card = container.querySelector(`[data-scenario-id="${s.id}"]`);
+    if (!card) return;
+    const btn = card.querySelector(".scenario-toggle");
+    const body = card.querySelector(".scenario-details-body");
+    if (!btn || !body) return;
+    btn.addEventListener("click", () => {
+      const isOpen = card.classList.toggle("is-expanded");
+      btn.setAttribute("aria-expanded", isOpen);
+      body.hidden = !isOpen;
+    });
   });
 }
 
@@ -547,7 +571,8 @@ function renderScenarioCards() {
 
   scenarios.forEach((s) => {
     const card = document.createElement("article");
-    card.className = "scenario-card";
+    card.className = "scenario-card scenario-expandable";
+    card.setAttribute("data-scenario-id", s.id);
 
     const marginLabel =
       s.netMargin2030Percent > 0
@@ -563,13 +588,19 @@ function renderScenarioCards() {
     const summary = summaries[s.id] || "";
 
     card.innerHTML = `
-      <div class="scenario-chip">${s.name}</div>
-      <p class="scenario-summary">${summary}</p>
-      <p class="scenario-margin">${marginLabel}</p>
-      <ul class="scenario-points">
-        ${closureText}
-        ${pointsHtml}
-      </ul>
+      <button type="button" class="scenario-toggle" aria-expanded="false" aria-controls="scenario-body-${s.id}">
+        <span class="scenario-toggle-label">${s.name}</span>
+        <span class="scenario-toggle-margin">${s.netMargin2030Percent > 0 ? "+" : ""}${s.netMargin2030Percent}%</span>
+        <span class="scenario-toggle-icon" aria-hidden="true"></span>
+      </button>
+      <div id="scenario-body-${s.id}" class="scenario-details-body" hidden>
+        <p class="scenario-summary">${summary}</p>
+        <p class="scenario-margin">${marginLabel}</p>
+        <ul class="scenario-points">
+          ${closureText}
+          ${pointsHtml}
+        </ul>
+      </div>
     `;
     container.appendChild(card);
   });
@@ -579,6 +610,7 @@ function initLeverSimulator() {
   const form = document.getElementById("lever-form");
   const labelEl = document.getElementById("lever-outcome-label");
   const detailEl = document.getElementById("lever-outcome-detail");
+  const badgeEl = document.getElementById("lever-outcome-badge");
   const chartCanvas = document.getElementById("leverScenarioChart");
   if (!form || !labelEl || !detailEl || !chartCanvas) return;
 
@@ -591,7 +623,6 @@ function initLeverSimulator() {
 
   const getSettings = () => ({ ...leverDefaults });
 
-  // Initialize button groups
   const leverGroups = form.querySelectorAll(".lever-group");
   leverGroups.forEach((group) => {
     const leverKey = group.getAttribute("data-lever");
@@ -617,36 +648,52 @@ function initLeverSimulator() {
     });
   });
 
+  const scenarioColors = (id) => {
+    if (id === "sustainability") return "#fbb040";
+    if (id === "rainy_day") return "#b91c1c";
+    return "#0072bc";
+  };
+
   let chart;
 
   const update = () => {
     const settings = getSettings();
     const bandId = inferScenarioBand(settings);
     const desc = bandDescription(bandId);
+    const bandScenario = scenarios.find((s) => s.id === bandId) || scenarios[2];
+
+    const badgeNames = {
+      sustainability: "Sustainability Prevails",
+      baseline_no_hr1: "Baseline",
+      baseline_hr1: "Baseline + H.R. 1",
+      rainy_day: "Rainy Day"
+    };
+    if (badgeEl) badgeEl.textContent = badgeNames[bandId] || bandId;
     labelEl.textContent = desc.label;
     detailEl.textContent = desc.detail;
 
-    const bandScenario = scenarios.find((s) => s.id === bandId) || scenarios[2];
+    const allLabels = scenarios.map((s) => s.name).concat("Your trajectory");
+    const allData = scenarios.map((s) => s.netMargin2030Percent).concat(bandScenario.netMargin2030Percent);
+    const allColors = scenarios.map((s) => scenarioColors(s.id)).concat(
+      bandScenario.id === "sustainability" ? "#0d9488" : bandScenario.id === "rainy_day" ? "#dc2626" : "#1d4ed8"
+    );
 
     if (!chart) {
       chart = new Chart(chartCanvas, {
         type: "bar",
         data: {
-          labels: ["Indicative 2030 margin"],
+          labels: allLabels,
           datasets: [
             {
-              label: "Margin",
-              data: [bandScenario.netMargin2030Percent],
-              backgroundColor:
-                bandScenario.id === "sustainability"
-                  ? "#0f766e"
-                  : bandScenario.id === "rainy_day"
-                  ? "#b91c1c"
-                  : "#1d4ed8"
+              label: "2030 net margin %",
+              data: allData,
+              backgroundColor: allColors,
+              borderWidth: 0
             }
           ]
         },
         options: {
+          indexAxis: "y",
           responsive: true,
           maintainAspectRatio: false,
           animation: { duration: CHART_ANIM_DURATION },
@@ -654,28 +701,29 @@ function initLeverSimulator() {
             legend: { display: false },
             tooltip: {
               callbacks: {
-                label: (ctx) => `${ctx.parsed.y}% net margin band`
+                label: (c) => `${c.parsed.x}% net margin`
               }
             }
           },
           scales: {
-            y: {
+            x: {
               beginAtZero: true,
-              ticks: {
-                callback: (value) => `${value}%`
-              }
+              min: -14,
+              max: 10,
+              ticks: { callback: (v) => `${v}%` },
+              grid: { color: "rgba(0,114,188,0.08)" }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { size: 11 }, padding: 10 }
             }
           }
         }
       });
     } else {
-      chart.data.datasets[0].data = [bandScenario.netMargin2030Percent];
-      chart.data.datasets[0].backgroundColor =
-        bandScenario.id === "sustainability"
-          ? "#0f766e"
-          : bandScenario.id === "rainy_day"
-          ? "#b91c1c"
-          : "#1d4ed8";
+      chart.data.labels = allLabels;
+      chart.data.datasets[0].data = allData;
+      chart.data.datasets[0].backgroundColor = allColors;
       chart.update();
     }
   };
@@ -851,8 +899,8 @@ function animateValue(el, target, format, durationMs) {
 }
 
 function initImpactCountUp() {
-  const container = document.getElementById("impact-stats");
-  if (!container) return;
+  const accessSection = document.getElementById("access");
+  if (!accessSection) return;
 
   const durationMs = 1800;
   let hasAnimated = false;
@@ -862,19 +910,29 @@ function initImpactCountUp() {
       const entry = entries[0];
       if (!entry?.isIntersecting || hasAnimated) return;
       hasAnimated = true;
-      const values = container.querySelectorAll(".impact-value[data-count-to]");
-      values.forEach((el) => {
+
+      const container = document.getElementById("impact-stats");
+      if (container) {
+        container.querySelectorAll(".impact-value[data-count-to]").forEach((el) => {
+          const target = Number(el.getAttribute("data-count-to"));
+          const format = el.getAttribute("data-format") || "number";
+          if (!Number.isFinite(target)) return;
+          el.textContent = formatImpactValue(0, format);
+          animateValue(el, target, format, durationMs);
+        });
+      }
+
+      accessSection.querySelectorAll(".closures-range-min[data-count-to], .closures-range-max[data-count-to]").forEach((el) => {
         const target = Number(el.getAttribute("data-count-to"));
-        const format = el.getAttribute("data-format") || "number";
         if (!Number.isFinite(target)) return;
-        el.textContent = formatImpactValue(0, format);
-        animateValue(el, target, format, durationMs);
+        el.textContent = "0";
+        animateValue(el, target, "number", durationMs);
       });
     },
     { threshold: 0.25, rootMargin: "0px 0px -40px 0px" }
   );
 
-  observer.observe(container);
+  observer.observe(accessSection);
 }
 
 function initBackToTop() {
