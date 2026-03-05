@@ -35,40 +35,22 @@
     </header>
 
     <main id="main-content">
-      <section id="overview" class="section">
+      <section id="overview" class="section" data-overview-section>
         <h2>Hospitals as Economic Engines</h2>
         <p class="section-intro">
           In a few numbers, see how central hospitals are to Pennsylvania’s economy and workforce.
-          Tap a tile to change the highlight and explore the story behind each figure.
+          Select a metric to update the highlight and chart.
         </p>
         <div class="overview-layout">
-          <div class="kpi-grid" id="overview-kpis" aria-label="Economic impact key figures">
-            <div class="kpi-card kpi-active" data-kpi-id="gdp">
-              <div class="kpi-label">Share of state GDP</div>
-              <div class="kpi-value">19%</div>
-              <div class="kpi-detail">Hospitals and related activity as a share of the Commonwealth’s GDP.</div>
-            </div>
-            <div class="kpi-card" data-kpi-id="output">
-              <div class="kpi-label">Total economic output</div>
-              <div class="kpi-value">$195B</div>
-              <div class="kpi-detail">Direct and indirect contributions from hospitals statewide.</div>
-            </div>
-            <div class="kpi-card" data-kpi-id="community">
-              <div class="kpi-label">Community benefit</div>
-              <div class="kpi-value">$10.8B</div>
-              <div class="kpi-detail">Includes shortfalls from Medicare/Medicaid, bad debt, and charity care.</div>
-            </div>
-            <div class="kpi-card" data-kpi-id="jobs">
-              <div class="kpi-label">Jobs supported</div>
-              <div class="kpi-value">300,000</div>
-              <div class="kpi-detail">Individuals employed directly by hospitals across Pennsylvania.</div>
-            </div>
-            <div class="kpi-card" data-kpi-id="wages">
-              <div class="kpi-label">Wages and benefits</div>
-              <div class="kpi-value">$33B+</div>
-              <div class="kpi-detail">Direct wages and benefits paid by hospitals.</div>
-            </div>
-          </div>
+          <nav class="overview-stats-nav" aria-label="Economic impact metrics">
+            <ul id="overview-stats-list" class="overview-stats-list">
+              <li><button type="button" class="overview-stat-btn is-active" data-stat="gdp"><span class="overview-stat-label">Share of state GDP</span><span class="overview-stat-value">19%</span><span class="overview-stat-detail">Hospitals and related activity as a share of the Commonwealth’s GDP.</span></button></li>
+              <li><button type="button" class="overview-stat-btn" data-stat="output"><span class="overview-stat-label">Total economic output</span><span class="overview-stat-value">$195B</span><span class="overview-stat-detail">Direct and indirect contributions from hospitals statewide.</span></button></li>
+              <li><button type="button" class="overview-stat-btn" data-stat="community"><span class="overview-stat-label">Community benefit</span><span class="overview-stat-value">$10.8B</span><span class="overview-stat-detail">Includes shortfalls from Medicare/Medicaid, bad debt, and charity care.</span></button></li>
+              <li><button type="button" class="overview-stat-btn" data-stat="jobs"><span class="overview-stat-label">Jobs supported</span><span class="overview-stat-value">300,000</span><span class="overview-stat-detail">Individuals employed directly by hospitals across Pennsylvania.</span></button></li>
+              <li><button type="button" class="overview-stat-btn" data-stat="wages"><span class="overview-stat-label">Wages and benefits</span><span class="overview-stat-value">$33B+</span><span class="overview-stat-detail">Direct wages and benefits paid by hospitals.</span></button></li>
+            </ul>
+          </nav>
           <div class="card overview-insight" aria-live="polite">
             <h3 id="kpi-focus-title">Hospitals’ share of the economy</h3>
             <p id="kpi-focus-text">
@@ -76,10 +58,7 @@
               <strong>$195 billion</strong> in total economic activity.
             </p>
             <div class="mini-chart-wrapper">
-              <canvas
-                id="economicShareChart"
-                aria-label="Share of state GDP represented by hospitals"
-              ></canvas>
+              <canvas id="economicShareChart" aria-label="Share of state GDP represented by hospitals"></canvas>
             </div>
           </div>
         </div>
@@ -324,7 +303,7 @@
 
     <button class="back-to-top" id="back-to-top" type="button">Back to top</button>
 
-    <script src="main.js?v=3"></script>
+    <script src="main.js?v=4"></script>
   </body>
   </html>
 
