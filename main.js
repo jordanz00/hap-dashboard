@@ -158,6 +158,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function renderOverviewKPIs(overviewChart) {
   const container = document.getElementById("overview-kpis");
   if (!container) return;
+  if (container.hasAttribute("data-kpis-inited")) return;
+  container.setAttribute("data-kpis-inited", "1");
 
   const formatter = new Intl.NumberFormat("en-US");
 
@@ -508,7 +510,9 @@ function initChartsWhenVisible() {
       container: document.querySelector("#overview .mini-chart-wrapper"),
       init: () => {
         const ch = initEconomicShareChart();
-        if (ch) renderOverviewKPIs(ch);
+        if (!ch) return;
+        if (document.getElementById("overview-kpis")?.hasAttribute("data-kpis-inited")) return;
+        renderOverviewKPIs(ch);
       }
     },
     {
@@ -914,4 +918,3 @@ function initBackToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
-
